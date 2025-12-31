@@ -2,24 +2,70 @@
   "$schema": "https://www.raycast.com/schemas/extension.json",
   "name": "yappify",
   "title": "yappify",
-  "description": "yap into your terminal",
+  "description": "Voice-to-text transcription using Whisper.cpp. Yap into your terminal with on-device AI.",
   "icon": "extension-icon.svg",
   "author": "sumeyacodes",
+  "packageManager": "pnpm@10.27.0",
   "platforms": [
-    "macOS",
-    "Windows"
+    "macOS"
   ],
   "categories": [
     "Developer Tools",
     "Fun"
   ],
   "license": "MIT",
+  "keywords": [
+    "voice",
+    "speech",
+    "transcription",
+    "whisper",
+    "ai",
+    "voice-to-text"
+  ],
   "commands": [
     {
-      "name": "yappify",
-      "title": "yappify",
-      "description": "activate the yap command",
-      "mode": "view"
+      "name": "yap",
+      "title": "Yap",
+      "description": "Voice-to-text: Yap into your terminal",
+      "mode": "no-view"
+    }
+  ],
+  "preferences": [
+    {
+      "name": "model",
+      "type": "dropdown",
+      "title": "Whisper Model",
+      "description": "Choose whisper model (larger = better quality, slower)",
+      "default": "tiny",
+      "required": false,
+      "data": [
+        {
+          "title": "Tiny (75MB, fast)",
+          "value": "tiny"
+        },
+        {
+          "title": "Base (142MB, better)",
+          "value": "base"
+        }
+      ]
+    },
+    {
+      "name": "outputMode",
+      "type": "dropdown",
+      "title": "Output Mode",
+      "description": "How to output transcribed text",
+      "default": "paste",
+      "required": false,
+      "data": [
+        {
+          "title": "Auto-paste to active app",
+          "value": "paste"
+        },
+        {
+          "title": "Copy to clipboard only",
+          "value": "clipboard"
+        }
+      ]
     }
   ],
   "dependencies": {
@@ -35,11 +81,13 @@
     "typescript": "^5.8.2"
   },
   "scripts": {
-    "build": "ray build",
-    "dev": "ray develop",
+    "build": "pnpm run build:addon && ray build",
+    "build:addon": "(test -f native/addon.node || (cd whisper.cpp/examples/addon.node && npm install && cd ../.. && npx cmake-js compile -T addon.node -B Release && mkdir -p ../native && cp build/Release/addon.node.node ../native/addon.node)) && mkdir -p assets && cp native/addon.node assets/addon.node",
+    "dev": "pnpm run build:addon && ray develop",
     "fix-lint": "ray lint --fix",
     "lint": "ray lint",
-    "prepublishOnly": "echo \"\\n\\nIt seems like you are trying to publish the Raycast extension to npm.\\n\\nIf you did intend to publish it to npm, remove the \\`prepublishOnly\\` script and rerun \\`npm publish\\` again.\\nIf you wanted to publish it to the Raycast Store instead, use \\`npm run publish\\` instead.\\n\\n\" && exit 1",
-    "publish": "npx @raycast/api@latest publish"
+    "prepublishOnly": "echo \"\\n\\nIt seems like you are trying to publish to npm.\\n\\nIf you did intend to publish to npm, remove the \\`prepublishOnly\\` script and rerun \\`pnpm publish\\` again.\\nIf you wanted to publish to the Raycast Store instead, use \\`pnpm run publish\\` instead.\\n\\n\" && exit 1",
+    "publish": "pnpm dlx @raycast/api@latest publish",
+    "postinstall": "git submodule update --init --recursive"
   }
 }

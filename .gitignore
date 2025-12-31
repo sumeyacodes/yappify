@@ -12,3 +12,14 @@ compiled_raycast_rust
 
 # misc
 .DS_Store
+# Compiled whisper addon
+native/
+assets/addon.node
+
+# Personal reference docs
+BUILD_WORKFLOW.md
+SUBMODULE_GUIDE.md
+
+# Whisper.cpp submodule build artifacts
+whisper.cpp/build/
+whisper.cpp/examples/addon.node/node_modules/
